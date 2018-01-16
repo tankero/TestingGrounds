@@ -1,7 +1,7 @@
-*/Intermediate
-*/Build
-*/Binaries
-*/Saved
-*/DerivedDataCache
-*/StarterContent
-.VC.db
+**/Intermediate
+**/Build
+**/Binaries
+**/Saved
+**/DerivedDataCache
+**/StarterContent
+**.VC.db
