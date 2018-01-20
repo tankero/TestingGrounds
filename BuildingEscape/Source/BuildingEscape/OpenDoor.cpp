@@ -1,7 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
+#pragma once
 #include "OpenDoor.h"
 #include "GameFramework/Actor.h"
+#include "Engine/World.h"
+#include "Components/SceneComponent.h"
+
+
 
 
 
@@ -17,19 +21,35 @@ UOpenDoor::UOpenDoor()
 }
 
 
+void UOpenDoor::OpenDoor()
+{
+	FString RotationString = GetOwner()->GetTransform().GetRotation().ToString();
+	UE_LOG(LogTemp, Warning, TEXT("Door Triggered: %s"), *OwnerName);
+	auto Rotation = GetOwner()->GetTransform().GetRotation();
+	GetOwner()->SetActorRotation(FRotator{ 0.f, OpenAngle, 0.f });
+	RotationString = GetOwner()->GetTransform().GetRotation().ToString();
+	UE_LOG(LogTemp, Warning, TEXT("Door Rotation: %s"), *RotationString);
+}
+void UOpenDoor::CloseDoor()
+{
+	FString RotationString = GetOwner()->GetTransform().GetRotation().ToString();
+	auto Rotation = GetOwner()->GetTransform().GetRotation();
+	UE_LOG(LogTemp, Warning, TEXT("Closing Door: %s"), *OwnerName);
+	GetOwner()->SetActorRotation(FRotator{ 0.f, ClosedAngle, 0.f });
+	RotationString = GetOwner()->GetTransform().GetRotation().ToString();
+	UE_LOG(LogTemp, Warning, TEXT("Door Rotation: %s"), *RotationString);
+}
 // Called when the game starts
 void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
-	AActor* Owner = GetOwner();
-	FString OwnerName = GetOwner()->GetName();
-	FString Vector = GetOwner()->GetActorLocation().ToString();
-
-	UE_LOG(LogTemp, Warning, TEXT("Position Report Logging in on %s at position %s"), *OwnerName, *Vector);
-	auto Rotation = GetOwner()->GetTransform().GetRotation();
-	UE_LOG(LogTemp, Warning, TEXT("Rotation of door set to %s"), *Rotation.ToString());
-	GetOwner()->SetActorRotation(FRotator{ 0.0f, -135.0f, 0.0f });
-	UE_LOG(LogTemp, Warning, TEXT("Rotation of door set to %s"), *Rotation.ToString());
+	ActorTrigger = GetWorld()->GetFirstPlayerController()->GetPawn();
+	Owner = GetOwner();
+	OwnerName = Owner->GetName();
+	ClosedAngle = Owner->GetActorRotation().Yaw;
+	OpenAngle = ClosedAngle + 90.0f;
+	UE_LOG(LogTemp, Warning, TEXT("Door: %s Open Angle: %s Closed Angle: %s"), *OwnerName, *FString::SanitizeFloat(OpenAngle), *FString::SanitizeFloat(ClosedAngle));
+	
 }
 
 
@@ -37,8 +57,20 @@ void UOpenDoor::BeginPlay()
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (PressurePlate->IsOverlappingActor(ActorTrigger) && !bOpened)
+	{
+		bOpened = true;
+		OpenDoor();
+		LastDoorOpenTime = GetWorld()->GetTimeSeconds();
 
-
+		
+	}
+	if (GetWorld()->GetTimeSeconds() - LastDoorOpenTime > DoorClosedDelay && bOpened)
+	{
+		bOpened = false;
+		CloseDoor();
+	}
+	
 	// ...
 }
 

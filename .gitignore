@@ -3,7 +3,8 @@
 **/Binaries
 **/Saved
 **/DerivedDataCache
-**/StarterContent
+**/StarterContent/Textures
+**/StarterContent/HDRI
 **.VC.db
 **/ipch
 *.opendb
