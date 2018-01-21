@@ -38,4 +38,5 @@ private:
 	void Grab();
 	void Drop();
 	FHitResult GetPhysicsBodyInReach() const;
+	FVector TraceGrabberLineEnd() const;
 };
