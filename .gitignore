@@ -9,3 +9,4 @@
 *.suo
 */Binaries/
 *.ipch
+*.sln

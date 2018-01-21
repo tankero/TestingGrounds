@@ -24,20 +24,20 @@ UOpenDoor::UOpenDoor()
 void UOpenDoor::OpenDoor()
 {
 	FString RotationString = GetOwner()->GetTransform().GetRotation().ToString();
-	UE_LOG(LogTemp, Warning, TEXT("Door Triggered: %s"), *OwnerName);
+	
 	auto Rotation = GetOwner()->GetTransform().GetRotation();
 	GetOwner()->SetActorRotation(FRotator{ 0.f, OpenAngle, 0.f });
 	RotationString = GetOwner()->GetTransform().GetRotation().ToString();
-	UE_LOG(LogTemp, Warning, TEXT("Door Rotation: %s"), *RotationString);
+	
 }
 void UOpenDoor::CloseDoor()
 {
 	FString RotationString = GetOwner()->GetTransform().GetRotation().ToString();
 	auto Rotation = GetOwner()->GetTransform().GetRotation();
-	UE_LOG(LogTemp, Warning, TEXT("Closing Door: %s"), *OwnerName);
+	
 	GetOwner()->SetActorRotation(FRotator{ 0.f, ClosedAngle, 0.f });
 	RotationString = GetOwner()->GetTransform().GetRotation().ToString();
-	UE_LOG(LogTemp, Warning, TEXT("Door Rotation: %s"), *RotationString);
+	
 }
 // Called when the game starts
 void UOpenDoor::BeginPlay()
@@ -48,7 +48,7 @@ void UOpenDoor::BeginPlay()
 	OwnerName = Owner->GetName();
 	ClosedAngle = Owner->GetActorRotation().Yaw;
 	OpenAngle = ClosedAngle + 90.0f;
-	UE_LOG(LogTemp, Warning, TEXT("Door: %s Open Angle: %s Closed Angle: %s"), *OwnerName, *FString::SanitizeFloat(OpenAngle), *FString::SanitizeFloat(ClosedAngle));
+	
 	
 }
 
