@@ -4,6 +4,8 @@
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
 #include "Components/SceneComponent.h"
+#include "Components/PrimitiveComponent.h"
+
 
 
 
@@ -20,57 +22,69 @@ UOpenDoor::UOpenDoor()
 	// ...
 }
 
-
-void UOpenDoor::OpenDoor()
-{
-	FString RotationString = GetOwner()->GetTransform().GetRotation().ToString();
-	
-	auto Rotation = GetOwner()->GetTransform().GetRotation();
-	GetOwner()->SetActorRotation(FRotator{ 0.f, OpenAngle, 0.f });
-	RotationString = GetOwner()->GetTransform().GetRotation().ToString();
-	
-}
-void UOpenDoor::CloseDoor()
-{
-	FString RotationString = GetOwner()->GetTransform().GetRotation().ToString();
-	auto Rotation = GetOwner()->GetTransform().GetRotation();
-	
-	GetOwner()->SetActorRotation(FRotator{ 0.f, ClosedAngle, 0.f });
-	RotationString = GetOwner()->GetTransform().GetRotation().ToString();
-	
-}
 // Called when the game starts
 void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
-	ActorTrigger = GetWorld()->GetFirstPlayerController()->GetPawn();
+
 	Owner = GetOwner();
 	OwnerName = Owner->GetName();
 	ClosedAngle = Owner->GetActorRotation().Yaw;
-	OpenAngle = ClosedAngle + 90.0f;
-	
-	
-}
+	OpenAngle +=ClosedAngle;
 
+	if (!PressurePlate)
+	{
+		UE_LOG(LogTemp, Error, TEXT("The object named: %s doesn't have a Pressure Plate component"), *GetOwner()->GetName());
+	}
+
+}
 
 // Called every frame
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	if (PressurePlate->IsOverlappingActor(ActorTrigger) && !bOpened)
+	if (GetTotalMassOfActorsOnPlate() > TriggerMass && !bOpened)
 	{
 		bOpened = true;
-		OpenDoor();
-		LastDoorOpenTime = GetWorld()->GetTimeSeconds();
-
+		OnOpenRequest.Broadcast();
 		
 	}
-	if (GetWorld()->GetTimeSeconds() - LastDoorOpenTime > DoorClosedDelay && bOpened)
+	if (GetTotalMassOfActorsOnPlate() < TriggerMass && bOpened)
 	{
 		bOpened = false;
-		CloseDoor();
+		OnCloseRequest.Broadcast();
 	}
-	
+
 	// ...
 }
+
+float UOpenDoor::GetTotalMassOfActorsOnPlate() const
+{
+	float TotalMass = 0.f;
+
+	TArray<AActor*> OverlappingActors;
+	if (!PressurePlate)
+	{
+		return TotalMass;
+	}
+	PressurePlate->GetOverlappingActors(OverlappingActors);
+
+	for (auto* actor : OverlappingActors)
+	{
+		UPrimitiveComponent* primitive = actor->FindComponentByClass<UPrimitiveComponent>();
+		TotalMass += primitive->GetMass();
+	}
+	return TotalMass;
+}
+
+float UOpenDoor::GetOpenAngle()
+{
+	return OpenAngle;
+}
+
+float UOpenDoor::GetClosedAngle()
+{
+	return ClosedAngle;
+}
+
 

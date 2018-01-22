@@ -5,11 +5,17 @@
 #include "CoreMinimal.h"
 #include "Engine/TriggerVolume.h"
 #include "Components/ActorComponent.h"
+#include "Curves/CurveFloat.h"
 #include "OpenDoor.generated.h"
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOpenRequest);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCloseRequest);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+
+
 class BUILDINGESCAPE_API UOpenDoor : public UActorComponent
 {
 	GENERATED_BODY()
@@ -17,10 +23,25 @@ class BUILDINGESCAPE_API UOpenDoor : public UActorComponent
 public:
 	// Sets default values for this component's properties
 	UOpenDoor();
-	void OpenDoor();
 
-	void CloseDoor();
+	UFUNCTION(BlueprintGetter)
+		float GetOpenAngle();
 
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open Angle Setting")
+		float OpenAngle = 0.0f;
+
+	UFUNCTION(BlueprintGetter)
+		float GetClosedAngle();
+
+	UPROPERTY(BlueprintReadOnly, Category = "Closed Angle for Door")
+		float ClosedAngle;
+
+	UPROPERTY(BlueprintAssignable)
+		FOnCloseRequest OnCloseRequest;
+
+	UPROPERTY(BlueprintAssignable)
+		FOnOpenRequest OnOpenRequest;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -28,25 +49,24 @@ protected:
 public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+
 private:
-	UPROPERTY(EditAnywhere)
-		float OpenAngle = 90.0f;
+
 
 	UPROPERTY(EditAnywhere)
-		ATriggerVolume* PressurePlate;
-
-	UPROPERTY(EditAnywhere)
-		AActor* ActorTrigger;
+		ATriggerVolume* PressurePlate = nullptr;
 
 	UPROPERTY(VisibleAnywhere)
 		bool bOpened = false;
 
 	UPROPERTY(EditAnywhere)
-		float DoorClosedDelay = 1.0f;
+		float TriggerMass = 50.f;
 
-	float LastDoorOpenTime;
+	
 
 	AActor* Owner;
 	FString OwnerName;
-	float ClosedAngle;
+
+	float GetTotalMassOfActorsOnPlate() const;
 };
