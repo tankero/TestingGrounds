@@ -46,13 +46,13 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	if (GetTotalMassOfActorsOnPlate() > TriggerMass && !bOpened)
 	{
 		bOpened = true;
-		OnOpenRequest.Broadcast();
+		OnOpen.Broadcast();
 		
 	}
 	if (GetTotalMassOfActorsOnPlate() < TriggerMass && bOpened)
 	{
 		bOpened = false;
-		OnCloseRequest.Broadcast();
+		OnClosed.Broadcast();
 	}
 
 	// ...

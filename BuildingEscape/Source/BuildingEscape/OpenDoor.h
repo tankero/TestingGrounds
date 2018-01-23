@@ -9,9 +9,9 @@
 #include "OpenDoor.generated.h"
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOpenRequest);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDoorRequest);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCloseRequest);
+
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 
@@ -29,19 +29,19 @@ public:
 
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Open Angle Setting")
-		float OpenAngle = 0.0f;
+		float OpenAngle = 0.f;
 
 	UFUNCTION(BlueprintGetter)
 		float GetClosedAngle();
 
-	UPROPERTY(BlueprintReadOnly, Category = "Closed Angle for Door")
-		float ClosedAngle;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Closed Angle for Door")
+		float ClosedAngle = 0.f;
 
 	UPROPERTY(BlueprintAssignable)
-		FOnCloseRequest OnCloseRequest;
+		FDoorRequest OnClosed;
 
 	UPROPERTY(BlueprintAssignable)
-		FOnOpenRequest OnOpenRequest;
+		FDoorRequest OnOpen;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
