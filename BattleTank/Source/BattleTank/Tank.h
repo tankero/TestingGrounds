@@ -7,6 +7,7 @@
 #include "Tank.generated.h"
 
 class UTankBarrel;
+class UTankTurret;
 class UTankAimingComponent;
 
 UCLASS()
@@ -20,6 +21,8 @@ public:
 
 	UFUNCTION(BluePrintCallable, Category = Setup)
 		void SetBarrelReference(UTankBarrel* BarrelToSet);
+	UFUNCTION(BluePrintCallable, Category = Setup)
+		void SetBarrelReference(UTankTurret* TurretToSet);
 	UPROPERTY(EditAnywhere, Category = Firing)
 		float LaunchSpeed = 10000.f;
 
@@ -29,8 +32,7 @@ protected:
 	UTankAimingComponent* TankAimingComponent = nullptr;
 
 public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

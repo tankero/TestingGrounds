@@ -26,6 +26,11 @@ void UTankAimingComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
 	
 }
 
+void UTankAimingComponent::SetTurretReference(UTankTurret * TurretToSet)
+{
+	TurretComponent = TurretToSet;
+}
+
 
 void UTankAimingComponent::AimAt(FVector& HitLocation, float LaunchSpeed)
 {
@@ -35,11 +40,16 @@ void UTankAimingComponent::AimAt(FVector& HitLocation, float LaunchSpeed)
 		return;
 	}
 	FVector suggestedVelocity;
-	bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity(this, suggestedVelocity, BarrelComponent->GetSocketLocation(FName("Muzzle")), HitLocation, LaunchSpeed);
+	bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity(this, suggestedVelocity, BarrelComponent->GetSocketLocation(FName("Muzzle")), HitLocation, LaunchSpeed, false, 0, 0, ESuggestProjVelocityTraceOption::DoNotTrace);
 	if (bHaveAimSolution)
 	{
 		auto DesiredAimDirection = suggestedVelocity.GetSafeNormal();
 		MoveBarrel(DesiredAimDirection);
+		UE_LOG(LogTemp, Warning, TEXT("%f: Firing Solution Found by %s"), GetWorld()->GetTimeSeconds(), *GetOwner()->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%f: No firing solution found by: %s"), GetWorld()->GetTimeSeconds(), *GetOwner()->GetName());
 	}
 	
 }
@@ -51,9 +61,9 @@ bool UTankAimingComponent::MoveBarrel(FVector BarrelDirection)
 	auto BarrelRotation = BarrelComponent->GetForwardVector().Rotation();
 	auto AimAsRotator = BarrelDirection.Rotation();
 	auto DeltaRotator = AimAsRotator - BarrelRotation;
-	UE_LOG(LogTemp, Warning, TEXT("Aim As Rotator: %s"), *DeltaRotator.ToString());
 
-	BarrelComponent->Elevate(5);
+
+	BarrelComponent->Elevate(DeltaRotator.Pitch);
 			
 
 	return false;

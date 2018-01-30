@@ -61,10 +61,6 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector& OutHitLocation) cons
 		{
 			GetControlledTank()->AimAt(OutHitLocation);
 		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("No hit"));
-		}
 	}
 	return true;
 }
