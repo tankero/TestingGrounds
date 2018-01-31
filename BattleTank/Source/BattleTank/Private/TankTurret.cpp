@@ -2,10 +2,6 @@
 
 #include "TankTurret.h"
 
-UTankTurret::UTankTurret()
-{
-	bAbsoluteRotation = true;
-}
 
 void UTankTurret::Rotate(float RelativeSpeed)
 {

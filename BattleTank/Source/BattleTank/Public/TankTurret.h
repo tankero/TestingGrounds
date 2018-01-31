@@ -18,7 +18,7 @@ class BATTLETANK_API UTankTurret : public UStaticMeshComponent
 public:
 	UPROPERTY(EditAnywhere, Category = Setup)
 		float RotationalSpeed = 20.f;
-	UTankTurret();
+	
 	void Rotate(float TargetAngle);
 	
 };
