@@ -2,7 +2,18 @@
 
 #include "TankTurret.h"
 
-void UTankTurret::Rotate(float TargetAngle)
+UTankTurret::UTankTurret()
+{
+	bAbsoluteRotation = true;
+}
+
+void UTankTurret::Rotate(float RelativeSpeed)
 {
 
+	RelativeSpeed = FMath::Clamp<float>(RelativeSpeed, -1.f, 1.f);
+	auto RotationChange = RelativeSpeed * RotationalSpeed * GetWorld()->DeltaTimeSeconds;
+	auto RawNewDirection = RelativeRotation.Yaw + RotationChange;
+	
+	SetRelativeRotation(FRotator(0.f, RawNewDirection, 0.f));
+	
 }
