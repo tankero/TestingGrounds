@@ -9,6 +9,8 @@
 class UTankBarrel;
 class UTankTurret;
 class UTankAimingComponent;
+class AProjectile;
+
 
 UCLASS()
 class BATTLETANK_API ATank : public APawn
@@ -25,19 +27,21 @@ public:
 		void SetTurretReference(UTankTurret* TurretToSet);
 	UPROPERTY(EditAnywhere, Category = Firing)
 		float LaunchSpeed = 10000.f;
+	UPROPERTY(EditAnywhere, Category = Setup)
+		TSubclassOf<AProjectile> ProjectileBlueprint = nullptr;
+
+	UTankBarrel* Barrel = nullptr;
+	
+	UFUNCTION(BluePrintCallable)
+		void Fire();
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	void AimAt(FVector Target);
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	UTankAimingComponent* TankAimingComponent = nullptr;
-
-public:
-
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	void AimAt(FVector Target);
-
-private:
+	
 
 };
