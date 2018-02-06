@@ -19,7 +19,7 @@ void UTankMovementComponent::RequestDirectMove(const FVector & MoveVelocity, boo
 	auto RightAngle = FVector::CrossProduct(TankForward, AIMovementDirection).Z;
 	IntendMoveForward(ForwardAngle);
 	IntendTurnRight(RightAngle);
-	//UE_LOG(LogTemp, Warning, TEXT("Tank: %s requesting move to %s"), *GetOwner()->GetName(), *AIMovementDirection.ToString());
+	
 }
 
 
@@ -41,3 +41,4 @@ void UTankMovementComponent::IntendTurnRight(float Throw)
 	LeftTrack->SetThrottle(Throw);
 	RightTrack->SetThrottle(-Throw);
 }
+

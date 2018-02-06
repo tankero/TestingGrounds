@@ -4,6 +4,7 @@
 
 #include "TankPlayerController.h"
 #include "Tank.h"
+#include "TankAimingComponent.h"
 #include "GameFramework/PlayerController.h"
 
 void ATankPlayerController::BeginPlay()
@@ -57,7 +58,7 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector& OutHitLocation) cons
 	{
 		if (GetLookVectorHitLocation(LookDirection, OutHitLocation))
 		{
-			GetControlledTank()->AimAt(OutHitLocation);
+			GetControlledTank()->AimingComponent->AimAt(OutHitLocation);
 		}
 	}
 	return true;

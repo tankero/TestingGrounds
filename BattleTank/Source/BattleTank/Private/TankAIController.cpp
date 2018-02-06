@@ -4,7 +4,7 @@
 #include "TankAIController.h"
 #include "Tank.h"
 #include "GameFramework/PlayerController.h"
-
+#include "TankAimingComponent.h"
 
 
 void ATankAIController::BeginPlay()
@@ -22,8 +22,8 @@ void ATankAIController::Tick(float DeltaSeconds)
 	{
 		MoveToActor(PlayerTank, AcceptanceRadius);
 
-		ControlledTank->AimAt(PlayerTank->GetActorLocation());
-		ControlledTank->Fire();
+		ControlledTank->AimingComponent->AimAt(PlayerTank->GetActorLocation());
+		ControlledTank->AimingComponent->Fire();
 	}
 }
 

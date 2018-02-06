@@ -3,6 +3,7 @@
 #include "TankAimingComponent.h"
 #include "TankBarrel.h"
 #include "TankTurret.h"
+#include "Projectile.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/ActorComponent.h"
 
@@ -21,6 +22,12 @@ UTankAimingComponent::UTankAimingComponent()
 }
 
 
+void UTankAimingComponent::InitializeAimingComponent(UTankBarrel * Barrel, UTankTurret * Turret)
+{
+	BarrelComponent = Barrel;
+	TurretComponent = Turret;
+}
+
 void UTankAimingComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
 {
 	BarrelComponent = BarrelToSet;
@@ -33,7 +40,7 @@ void UTankAimingComponent::SetTurretReference(UTankTurret * TurretToSet)
 }
 
 
-void UTankAimingComponent::AimAt(FVector& HitLocation, float LaunchSpeed)
+void UTankAimingComponent::AimAt(FVector HitLocation)
 {
 	if (!BarrelComponent)
 	{
@@ -45,6 +52,7 @@ void UTankAimingComponent::AimAt(FVector& HitLocation, float LaunchSpeed)
 		UE_LOG(LogTemp, Warning, TEXT("No Turret Component Found: %s"), *GetOwner()->GetName())
 			return;
 	}
+	AimingLaunchSpeed = LaunchSpeed;
 	FVector SuggestedVelocity;
 	bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity(this, SuggestedVelocity, BarrelComponent->GetSocketLocation(FName("Muzzle")), HitLocation, LaunchSpeed, false, 0, 0, ESuggestProjVelocityTraceOption::DoNotTrace);
 	if (bHaveAimSolution)
@@ -77,5 +85,19 @@ bool UTankAimingComponent::MoveBarrel(FVector BarrelDirection)
 	return false;
 }
 
+void UTankAimingComponent::Fire()
+{
+	bool bIsReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
+
+	if (BarrelComponent && bIsReloaded && ProjectileBlueprint)
+	{
+		auto Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileBlueprint, BarrelComponent->GetSocketLocation("Muzzle"), BarrelComponent->GetSocketRotation("Muzzle"));
+		Projectile->LaunchProjectile(AimingLaunchSpeed);
+		LastFireTime = FPlatformTime::Seconds();
+	};
+
+
+
+}
 
 
