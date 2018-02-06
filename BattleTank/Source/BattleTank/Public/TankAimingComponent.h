@@ -21,6 +21,9 @@ public:
 	void SetTurretReference(UTankTurret* TurretToSet);
 	void AimAt(FVector& HitLocation, float LaunchSpeed);
 	bool MoveBarrel(FVector BarrelDirection);
+	
+
+
 private:
 	UTankBarrel* BarrelComponent = nullptr;
 	UTankTurret* TurretComponent = nullptr;

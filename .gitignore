@@ -10,3 +10,4 @@
 */Binaries/
 *.ipch
 *.sln
+*.VC.*

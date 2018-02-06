@@ -3,6 +3,7 @@
 #include "Projectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "GameFramework/Actor.h"
+#include "Components/ActorComponent.h"
 
 
 // Sets default values
@@ -16,7 +17,7 @@ AProjectile::AProjectile()
 
 void AProjectile::LaunchProjectile(float speed)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%f: Projectile launched at %f"), GetWorld()->GetTimeSeconds(), speed);
+	
 	MovementComponent->SetVelocityInLocalSpace(FVector::ForwardVector * speed);
 	MovementComponent->Activate();
 }
