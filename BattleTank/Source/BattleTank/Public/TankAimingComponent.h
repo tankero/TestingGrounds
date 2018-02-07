@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
 #include "TankAimingComponent.generated.h"
 
 
@@ -49,6 +48,8 @@ protected:
 		EFiringStatus FiringStatus = EFiringStatus::Reloading;
 
 private:
+	virtual void BeginPlay() override;
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 	UTankBarrel * BarrelComponent = nullptr;
 	UTankTurret* TurretComponent = nullptr;
 	float AimingLaunchSpeed;

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// TankeroProductions
 
 #pragma once
 
@@ -10,7 +10,8 @@
  *
  */
 
-class ATank;
+
+class UTankAimingComponent;
 
 UCLASS()
 class BATTLETANK_API ATankPlayerController : public APlayerController
@@ -19,6 +20,7 @@ class BATTLETANK_API ATankPlayerController : public APlayerController
 
 public:
 	virtual void BeginPlay() override;
+	
 	virtual void Tick(float DeltaSeconds) override;
 	ATankPlayerController();
 	UPROPERTY(EditAnywhere)
@@ -29,11 +31,11 @@ public:
 		float LineTraceRange = 10000000.f;
 
 protected:
-	UFUNCTION(BluePrintCallable, Category = "Setup")
-		ATank * GetControlledTank() const;
+	UFUNCTION(BlueprintImplementableEvent, Category = "Setup")
+		void FoundAimingComponent(UTankAimingComponent* AimCompRef);
 private:
 
-
+	UTankAimingComponent* AimingComponent;
 	void AimTowardsCrosshair();
 	bool GetSightRayHitLocation(FVector&) const;
 	bool GetLookDirection(FVector2D CrosshairsLocation, FVector & LookDirection) const;

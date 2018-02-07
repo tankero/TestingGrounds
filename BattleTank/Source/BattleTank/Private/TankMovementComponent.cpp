@@ -6,7 +6,6 @@
 
 void UTankMovementComponent::InitializeMovementComponent(UTankTrack* LeftTrackToSet, UTankTrack* RightTrackToSet)
 {
-
 	LeftTrack = LeftTrackToSet;
 	RightTrack = RightTrackToSet;
 }
@@ -19,13 +18,13 @@ void UTankMovementComponent::RequestDirectMove(const FVector & MoveVelocity, boo
 	auto RightAngle = FVector::CrossProduct(TankForward, AIMovementDirection).Z;
 	IntendMoveForward(ForwardAngle);
 	IntendTurnRight(RightAngle);
-	
+
 }
 
 
 void UTankMovementComponent::IntendMoveForward(float Throw)
 {
-	if (!LeftTrack || !RightTrack)
+	if (!ensure(LeftTrack && RightTrack))
 	{
 		return;
 	}
@@ -34,7 +33,7 @@ void UTankMovementComponent::IntendMoveForward(float Throw)
 }
 void UTankMovementComponent::IntendTurnRight(float Throw)
 {
-	if (!LeftTrack || !RightTrack)
+	if (!ensure(LeftTrack && RightTrack))
 	{
 		return;
 	}

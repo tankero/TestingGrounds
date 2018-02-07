@@ -16,11 +16,29 @@ UTankAimingComponent::UTankAimingComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	
+	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bStartWithTickEnabled = true;
+
 
 	// ...
 }
 
+void UTankAimingComponent::BeginPlay()
+{
+	Super::BeginPlay();
+	LastFireTime = FPlatformTime::Seconds();
+}
+void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
+{
+	if ((FPlatformTime::Seconds() - LastFireTime) < ReloadTimeInSeconds)
+	{
+		FiringStatus = EFiringStatus::Reloading;
+	}
+	else
+	{
+		FiringStatus = EFiringStatus::Aiming;
+	}
+}
 
 void UTankAimingComponent::InitializeAimingComponent(UTankBarrel * Barrel, UTankTurret * Turret)
 {
@@ -42,15 +60,13 @@ void UTankAimingComponent::SetTurretReference(UTankTurret * TurretToSet)
 
 void UTankAimingComponent::AimAt(FVector HitLocation)
 {
-	if (!BarrelComponent)
+	if (!ensure(BarrelComponent))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("No Barrel Component Found: %s"), *GetOwner()->GetName())
-			return;
+		return;
 	}
-	if (!TurretComponent)
+	if (!ensure(TurretComponent))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("No Turret Component Found: %s"), *GetOwner()->GetName())
-			return;
+		return;
 	}
 	AimingLaunchSpeed = LaunchSpeed;
 	FVector SuggestedVelocity;
@@ -59,12 +75,9 @@ void UTankAimingComponent::AimAt(FVector HitLocation)
 	{
 		auto DesiredAimDirection = SuggestedVelocity.GetSafeNormal();
 		MoveBarrel(DesiredAimDirection);
-		
+
 	}
-	else
-	{
-		
-	}
+
 
 }
 
@@ -76,7 +89,7 @@ bool UTankAimingComponent::MoveBarrel(FVector BarrelDirection)
 	auto DeltaElevationRotator = AimAsRotator - BarrelRotation;
 	auto TurretRotation = TurretComponent->GetForwardVector().Rotation();
 	auto DeltaDirectionRotator = AimAsRotator - TurretRotation;
-	
+
 
 	BarrelComponent->Elevate(DeltaElevationRotator.Pitch);
 	TurretComponent->Rotate(DeltaDirectionRotator.Yaw);
@@ -87,17 +100,22 @@ bool UTankAimingComponent::MoveBarrel(FVector BarrelDirection)
 
 void UTankAimingComponent::Fire()
 {
-	bool bIsReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeInSeconds;
-
-	if (BarrelComponent && bIsReloaded && ProjectileBlueprint)
+	if (FiringStatus != EFiringStatus::Reloading)
 	{
+
+if (!ensure(ProjectileBlueprint))
+		{
+			return;
+		}
+
 		auto Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileBlueprint, BarrelComponent->GetSocketLocation("Muzzle"), BarrelComponent->GetSocketRotation("Muzzle"));
 		Projectile->LaunchProjectile(AimingLaunchSpeed);
 		LastFireTime = FPlatformTime::Seconds();
-	};
-
-
+	}
 
 }
+
+
+
 
 
