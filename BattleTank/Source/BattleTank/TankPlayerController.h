@@ -35,6 +35,12 @@ protected:
 		void FoundAimingComponent(UTankAimingComponent* AimCompRef);
 private:
 
+	virtual void SetPawn(APawn* InPawn) override;
+
+	UFUNCTION()
+		void OnTankDeath();
+
+
 	UTankAimingComponent* AimingComponent;
 	void AimTowardsCrosshair();
 	bool GetSightRayHitLocation(FVector&) const;

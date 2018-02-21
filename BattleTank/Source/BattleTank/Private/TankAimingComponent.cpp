@@ -23,10 +23,20 @@ UTankAimingComponent::UTankAimingComponent()
 	// ...
 }
 
+bool UTankAimingComponent::IsBarrelMoving() const
+{
+	if (!ensure(BarrelComponent))
+	{
+		return false;
+	}
+	return !BarrelComponent->GetForwardVector().Equals(DesiredAimDirection, 0.05);
+}
+
 void UTankAimingComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	LastFireTime = FPlatformTime::Seconds();
+	CurrentAmmoCount = AmmoMagazine;
 }
 void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction)
 {
@@ -34,9 +44,17 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	{
 		FiringStatus = EFiringStatus::Reloading;
 	}
-	else
+	else if (IsBarrelMoving())
 	{
 		FiringStatus = EFiringStatus::Aiming;
+	}
+	else
+	{
+		FiringStatus = EFiringStatus::Locked;
+	}
+	if (CurrentAmmoCount <= 0)
+	{
+		FiringStatus = EFiringStatus::OutOfAmmo;
 	}
 }
 
@@ -73,7 +91,7 @@ void UTankAimingComponent::AimAt(FVector HitLocation)
 	bool bHaveAimSolution = UGameplayStatics::SuggestProjectileVelocity(this, SuggestedVelocity, BarrelComponent->GetSocketLocation(FName("Muzzle")), HitLocation, LaunchSpeed, false, 0, 0, ESuggestProjVelocityTraceOption::DoNotTrace);
 	if (bHaveAimSolution)
 	{
-		auto DesiredAimDirection = SuggestedVelocity.GetSafeNormal();
+		DesiredAimDirection = SuggestedVelocity.GetSafeNormal();
 		MoveBarrel(DesiredAimDirection);
 
 	}
@@ -92,7 +110,15 @@ bool UTankAimingComponent::MoveBarrel(FVector BarrelDirection)
 
 
 	BarrelComponent->Elevate(DeltaElevationRotator.Pitch);
-	TurretComponent->Rotate(DeltaDirectionRotator.Yaw);
+	if (FMath::Abs(DeltaDirectionRotator.Yaw) > 180.f)
+	{
+		TurretComponent->Rotate(-DeltaDirectionRotator.Yaw);
+	}
+	else
+	{
+		TurretComponent->Rotate(DeltaDirectionRotator.Yaw);
+	}
+
 
 
 	return false;
@@ -100,19 +126,33 @@ bool UTankAimingComponent::MoveBarrel(FVector BarrelDirection)
 
 void UTankAimingComponent::Fire()
 {
-	if (FiringStatus != EFiringStatus::Reloading)
+	if (FiringStatus != EFiringStatus::Reloading && CurrentAmmoCount > 0)
 	{
-
-if (!ensure(ProjectileBlueprint))
+		CurrentAmmoCount--;
+		if (!ensure(ProjectileBlueprint))
 		{
 			return;
 		}
-
+		
+		
 		auto Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileBlueprint, BarrelComponent->GetSocketLocation("Muzzle"), BarrelComponent->GetSocketRotation("Muzzle"));
 		Projectile->LaunchProjectile(AimingLaunchSpeed);
 		LastFireTime = FPlatformTime::Seconds();
+
+		
+
 	}
 
+}
+
+int32 UTankAimingComponent::GetCurrentAmmoCount() const
+{
+	return CurrentAmmoCount;
+}
+
+EFiringStatus UTankAimingComponent::GetFiringStatus() const
+{
+	return FiringStatus;
 }
 
 

@@ -4,11 +4,16 @@
 
 #include "TankPlayerController.h"
 #include "TankAimingComponent.h"
+#include "Tank.h"
 #include "GameFramework/PlayerController.h"
 
 void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	if (!GetPawn())
+	{
+		return;
+	}
 	AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
 	if (!ensure (AimingComponent))
 	{
@@ -30,14 +35,36 @@ ATankPlayerController::ATankPlayerController()
 	
 }
 
+void ATankPlayerController::SetPawn(APawn * InPawn)
+{
+	Super::SetPawn(InPawn);
+	if (InPawn)
+	{
+		auto PossessedTank = Cast<ATank>(InPawn);
+		if (!ensure(PossessedTank))
+		{
+			return;
+		}
+		PossessedTank->OnTankDeath.AddUniqueDynamic(this, &ATankPlayerController::OnTankDeath);
+	}
+}
+
+void ATankPlayerController::OnTankDeath()
+{
+	
+	StartSpectatingOnly();
+}
 
 
 void ATankPlayerController::AimTowardsCrosshair()
 {
 	if (!GetPawn()) { return; }
 	FVector HitLocation;
-	GetSightRayHitLocation(HitLocation);
-	
+	bool bGotHitLocation = GetSightRayHitLocation(HitLocation);
+	if (bGotHitLocation)
+	{
+		AimingComponent->AimAt(HitLocation);
+	}
 
 }
 
@@ -49,12 +76,10 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector& OutHitLocation) cons
 	FVector LookDirection;
 	if (GetLookDirection(crosshairsLocation, LookDirection))
 	{
-		if (GetLookVectorHitLocation(LookDirection, OutHitLocation))
-		{
-			AimingComponent->AimAt(OutHitLocation);
-		}
+		return GetLookVectorHitLocation(LookDirection, OutHitLocation);
+		
 	}
-	return true;
+	return false;
 }
 
 bool ATankPlayerController::GetLookDirection(FVector2D CrosshairsLocation, FVector& LookDirection) const
@@ -79,7 +104,7 @@ bool ATankPlayerController::GetLookVectorHitLocation(FVector Direction, FVector&
 		HitResult,
 		StartLocation,
 		EndLocation,
-		ECC_Visibility
+		ECC_Camera
 	))
 	{
 		HitLocation = HitResult.Location;

@@ -11,6 +11,7 @@
 
 class UTankAimingComponent;
 
+
 UCLASS()
 class BATTLETANK_API ATankAIController : public AAIController
 {
@@ -18,13 +19,20 @@ class BATTLETANK_API ATankAIController : public AAIController
 
 
 public:
-	
+
 	ATankAIController();
 private:
 	UTankAimingComponent * AimingComponent;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
-	float AcceptanceRadius = 300.f;
-	
+
+	virtual void SetPawn(APawn* InPawn) override;
+
+	UFUNCTION()
+		void OnTankDeath();
+
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+		float AcceptanceRadius = 8000.f;
+
 
 };
