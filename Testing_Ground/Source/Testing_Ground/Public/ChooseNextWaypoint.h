@@ -9,12 +9,23 @@
 /**
  *
  */
+
+class APatrollingGuard;
 UCLASS()
 class TESTING_GROUND_API UChooseNextWaypoint : public UBTTaskNode
 {
 	GENERATED_BODY()
 
+	
+		
+public:	
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
+protected:
+	UPROPERTY(EditAnywhere, Category = "Blackboard")
+	struct FBlackboardKeySelector IndexKey;
+	
+	UPROPERTY(EditAnywhere, Category = "Blackboard")
+	struct FBlackboardKeySelector ObjectKey;
 
 };
