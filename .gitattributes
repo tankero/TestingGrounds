@@ -1,1 +1,2 @@
-*.uasset filter=lfs diff=lfs merge=lfs -text
+Repo/Testing_Ground/Content/Static/** filter=lfs diff=lfs merge=lfs -text
+/Content/Static/** filter=lfs diff=lfs merge=lfs -text
