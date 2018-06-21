@@ -84,3 +84,10 @@ void AGunActor::OnFire()
 	
 }
 
+void AGunActor::FireWeapon()
+{
+	OnFire();
+}
+
+
+
