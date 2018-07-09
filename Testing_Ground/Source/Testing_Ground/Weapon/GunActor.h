@@ -39,7 +39,7 @@ public:
 		class USceneComponent* FP_MuzzleLocation;
 
 	/** Projectile class to spawn */
-	UPROPERTY(EditDefaultsOnly, Category = Projectile)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = Projectile)
 		TSubclassOf<class ATesting_GroundProjectile> ProjectileClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)

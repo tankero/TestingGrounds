@@ -86,6 +86,7 @@ void AGunActor::OnFire()
 
 void AGunActor::FireWeapon()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Bang!"))
 	OnFire();
 }
 
