@@ -13,7 +13,7 @@ AGunActor::AGunActor()
 {
 	// Create a gun mesh component
 	FP_Gun = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FP_Gun"));
-	
+
 	FP_Gun->bCastDynamicShadow = false;
 	FP_Gun->CastShadow = false;
 	// FP_Gun->SetupAttachment(Mesh1P, TEXT("GripPoint"));
@@ -24,8 +24,12 @@ AGunActor::AGunActor()
 	FP_MuzzleLocation->SetupAttachment(FP_Gun);
 	FP_MuzzleLocation->SetRelativeLocation(FVector(0.2f, 48.4f, -10.6f));
 
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	ReadyToFire = true;
+	Firing = false;
+
+
 
 }
 
@@ -33,7 +37,7 @@ AGunActor::AGunActor()
 void AGunActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -41,10 +45,22 @@ void AGunActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (Firing)
+	{
+
+		if (ReadyToFire)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Ready to fire and firing"))
+				OnFire();
+		}
+	}
+
 }
 
 void AGunActor::OnFire()
 {
+
+	ReadyToFire = false;
 
 	// try and fire a projectile
 	if (ProjectileClass != NULL)
@@ -52,7 +68,7 @@ void AGunActor::OnFire()
 		UWorld* const World = GetWorld();
 		if (World != NULL)
 		{
-			
+			World->GetTimerManager().SetTimer(ReloadTimerHandle, this, &AGunActor::OnReload, FiringRate, false);
 			const FRotator SpawnRotation = FP_MuzzleLocation->GetComponentRotation();
 			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
 			const FVector SpawnLocation = FP_MuzzleLocation->GetComponentLocation();
@@ -63,15 +79,18 @@ void AGunActor::OnFire()
 
 			// spawn the projectile at the muzzle
 			World->SpawnActor<ATesting_GroundProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
-			if (FireAnimation != NULL)
+
+			// Get the animation object for the arms mesh
+
+			if ((P1AnimInstance != NULL) & (P1FireAnimation != NULL))
 			{
-				// Get the animation object for the arms mesh
-				
-				if (AnimInstance != NULL)
-				{
-					AnimInstance->Montage_Play(FireAnimation, 1.f);
-				}
+				P1AnimInstance->Montage_Play(P1FireAnimation, 1.f);
 			}
+			if ((P3AnimInstance != NULL) & (P3FireAnimation != NULL))
+			{
+				P3AnimInstance->Montage_Play(P3FireAnimation, 1.f);
+			}
+
 
 		}
 	}
@@ -81,14 +100,23 @@ void AGunActor::OnFire()
 		UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
 	}
 
-	
+
 }
 
 void AGunActor::FireWeapon()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Bang!"))
-	OnFire();
+	UE_LOG(LogTemp, Warning, TEXT("Weapon trigger squeezed"))
+		Firing = true;
 }
 
+void AGunActor::StopFiring()
+{
+	Firing = false;
+}
+
+void AGunActor::OnReload()
+{
+	ReadyToFire = true;
+}
 
 

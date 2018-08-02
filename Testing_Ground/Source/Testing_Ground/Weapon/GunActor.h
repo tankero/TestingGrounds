@@ -18,7 +18,14 @@ public:
 	void OnFire();
 
 	UFUNCTION(BlueprintCallable)
-	void FireWeapon();
+		void FireWeapon();
+	
+	UFUNCTION(BlueprintCallable)
+		void StopFiring();
+
+	UFUNCTION()
+		void OnReload();
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -39,16 +46,36 @@ public:
 		class USceneComponent* FP_MuzzleLocation;
 
 	/** Projectile class to spawn */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = Projectile)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Projectile)
 		TSubclassOf<class ATesting_GroundProjectile> ProjectileClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-		class UAnimMontage* FireAnimation;
+		class UAnimMontage* P1FireAnimation;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+		class UAnimMontage* P3FireAnimation;
 
 	/** Sound to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 		class USoundBase* FireSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-		class UAnimInstance* AnimInstance;
+		class UAnimInstance* P1AnimInstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+		class UAnimInstance* P3AnimInstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default)
+		float FiringRate = 0.5f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default)
+		bool ReadyToFire;
+
+
+
+private:
+	
+	FTimerHandle ReloadTimerHandle;
+
+	bool Firing;
+
 };

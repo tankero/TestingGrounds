@@ -40,7 +40,10 @@ AMannequin::AMannequin()
 void AMannequin::BeginPlay()
 {
 	Super::BeginPlay();
-
+	Weapon = GetWorld()->SpawnActor<AGunActor>(WeaponBlueprint);
+	Weapon->AttachToComponent(Mesh1P, FAttachmentTransformRules::SnapToTargetIncludingScale, "GripPoint" );
+	Weapon->P3AnimInstance = GetMesh()->GetAnimInstance();
+	Weapon->P1AnimInstance = Mesh1P->GetAnimInstance();
 }
 
 // Called every frame
@@ -59,11 +62,13 @@ void AMannequin::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 void AMannequin::SqueezeTrigger()
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("Squeezing Trigger"))
+	Weapon->FireWeapon();
 
 }
 
 void AMannequin::ReleaseTrigger()
 {
+	Weapon->StopFiring();
 }
 

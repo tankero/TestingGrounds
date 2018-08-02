@@ -17,7 +17,10 @@ public:
 	// Sets default values for this character's properties
 	AMannequin();
 
+	class AGunActor* Weapon;
 
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+	TSubclassOf<class AGunActor> WeaponBlueprint;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FirstPersonCameraComponent;
