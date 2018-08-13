@@ -4,11 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Components/StaticMeshComponent.h"
-#include "Engine/StaticMesh.h"
-#include "Placeable.h"
 #include "Tile.generated.h"
-
 
 UCLASS()
 class TESTING_GROUND_API ATile : public AActor
@@ -19,8 +15,8 @@ public:
 	// Sets default values for this actor's properties
 	ATile();
 
-	UPROPERTY(EditAnywhere, Category = "Setup")
-		TSubclassOf<AActor> Placeable;
+	UFUNCTION(BlueprintCallable, Category = "Setup")
+	void PlaceActors();
 
 protected:
 	// Called when the game starts or when spawned
@@ -29,9 +25,6 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	UFUNCTION(BlueprintCallable, Category = "Setup")
-		void PlaceActors();
 
 	
 	

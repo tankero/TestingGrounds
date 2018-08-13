@@ -14,42 +14,14 @@ ATile::ATile()
 
 void ATile::PlaceActors()
 {
-	TArray<FVector> pointCollection;
-	FBox* Box;
-	TArray<UActorComponent*> MeshArray = GetComponentsByClass(UStaticMeshComponent::StaticClass());
-	UStaticMeshComponent* Floor;
-	FVector Origin;
-	
-	for (size_t i = 0; i < MeshArray.Num(); i++)
-	{
-		
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *MeshArray[i]->GetName());
-		if (MeshArray[i]->ComponentHasTag("Floor") && MeshArray[i]->GetOwner() == this)
-		{
-			Floor = (UStaticMeshComponent*) MeshArray[i];
-			Origin = Floor->GetComponentLocation();
-			if (!ensure(Origin != FVector(0, 0, 0)))
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Origin failed to set properly"))
-					return;
-			};
-			Box = new FBox(Floor->GetStaticMesh()->GetBoundingBox());
-			for (size_t i = 0; i < 5; i++)
-			{
-				pointCollection.Add(FMath::RandPointInBox(*Box));
-				GetWorld()->SpawnActor<AActor>(Placeable, pointCollection.Last(), FRotator::ZeroRotator);
 
-			}
-			return;
-		}
-	};
 }
 
 // Called when the game starts or when spawned
 void ATile::BeginPlay()
 {
 	Super::BeginPlay();
-	PlaceActors();
+	
 }
 
 // Called every frame
