@@ -22,6 +22,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Setup")
 		TSubclassOf<AActor> Placeable;
 
+	UPROPERTY(BlueprintReadWrite, Category = "Setup")
+		TArray<AActor*> PlaceablesArray;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
