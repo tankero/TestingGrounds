@@ -50,8 +50,7 @@ void AGunActor::Tick(float DeltaTime)
 
 		if (ReadyToFire)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Ready to fire and firing"))
-				OnFire();
+			OnFire();
 		}
 	}
 
@@ -105,8 +104,7 @@ void AGunActor::OnFire()
 
 void AGunActor::FireWeapon()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Weapon trigger squeezed"))
-		Firing = true;
+	Firing = true;
 }
 
 void AGunActor::StopFiring()

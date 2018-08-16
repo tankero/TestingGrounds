@@ -2,7 +2,6 @@
 
 #include "MainGameMode.h"
 #include "Testing_GroundHUD.h"
-#include "Player/FirstPersonCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 AMainGameMode::AMainGameMode()

@@ -33,7 +33,7 @@ AMannequin::AMannequin()
 	Mesh1P->RelativeLocation = FVector(-7.1f, -20.f, -154.1f);
 
 
-	/*Cast<AGunActor>(WeaponComponent->GetChildActor())->FireWeapon();*/
+	
 }
 
 // Called when the game starts or when spawned
@@ -49,10 +49,10 @@ void AMannequin::BeginPlay()
 	{
 		Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "GripPoint_0");
 	}
-	
+
 	Weapon->P3AnimInstance = GetMesh()->GetAnimInstance();
 	Weapon->P1AnimInstance = Mesh1P->GetAnimInstance();
-	UE_LOG(LogTemp, Warning, TEXT("Managed to successfully launch Mannequien.cpp"))
+
 }
 
 // Called every frame
@@ -72,18 +72,16 @@ void AMannequin::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 void AMannequin::UnPossessed()
 {
 	Super::UnPossessed();
-	if(Weapon != nullptr)
-	Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "GripPoint_0");
+	if (Weapon != nullptr)
+		Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "GripPoint_0");
 }
 
 void AMannequin::SqueezeTrigger()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Squeezing Trigger"))
+
 	Weapon->FireWeapon();
 
 }
-
-
 
 void AMannequin::ReleaseTrigger()
 {

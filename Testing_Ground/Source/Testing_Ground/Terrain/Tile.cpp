@@ -24,7 +24,7 @@ void ATile::PlaceActors()
 	{
 		
 		UE_LOG(LogTemp, Warning, TEXT("%s"), *MeshArray[i]->GetName());
-		if (MeshArray[i]->ComponentHasTag("Floor") && MeshArray[i]->GetOwner() == this)
+		if (MeshArray[i]->ComponentHasTag("Floor"))
 		{
 			Floor = (UStaticMeshComponent*) MeshArray[i];
 			Origin = Floor->GetComponentLocation();
@@ -37,9 +37,11 @@ void ATile::PlaceActors()
 			for (size_t i = 0; i < 5; i++)
 			{
 				pointCollection.Add(FMath::RandPointInBox(*Box));
-				GetWorld()->SpawnActor<AActor>(Placeable, pointCollection.Last(), FRotator::ZeroRotator);
+				FVector retrievedPoint = pointCollection.Last() + Origin;
+				PlaceablesArray.Add(GetWorld()->SpawnActor<AActor>(Placeable, FVector(retrievedPoint.X, retrievedPoint.Y, 60.f), FRotator::ZeroRotator));
 
 			}
+			
 			return;
 		}
 	};
