@@ -12,58 +12,69 @@ ATile::ATile()
 }
 
 
-void ATile::PlaceActors(TSubclassOf<AActor> Placeable)
+void ATile::PlaceActors(TSubclassOf<AActor> Placeable, int MinPlaced, int MaxPlaced, float Radius)
 {
 	TArray<FVector> pointCollection;
-	FBox* Box;
-	FVector Origin;
-	AActor* PlacedActor;
 
+	//AActor* PlacedActor;
 	if (Placeable == nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Placeable class was null"))
 			return;
 	}
-
-	if (!ensure(Origin != FVector(0, 0, 0)))
+	int counter = FMath::RandRange(MinPlaced, MaxPlaced);
+	for (size_t i = 0; i < counter; i++)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Origin failed to set properly"))
-			return;
-	};
-	FVector min = FVector(0, -2000, 0);
-	FVector max = FVector(4000, 2000, 0);
-	Box = new FBox(min, max);
-	for (size_t i = 0; i < 2; i++)
-	{
-		FVector candidatePoint = FMath::RandPointInBox(*Box);
-		bool invalidPoint = false;
-
-		do
-		{
-			invalidPoint = FVector::Distance(candidatePoint, min) < 5.f || FVector::Distance(candidatePoint, max) < 5.f;
-			if (PlaceablesArray.Num() > 0 && !invalidPoint)
-			{
-				for (size_t i = 0; i < PlaceablesArray.Num() - 1; i++)
-				{
-					invalidPoint = (FVector::Distance(PlaceablesArray[i]->GetActorLocation(), candidatePoint) < 5.f);
-
-				}
-
-			}
-
-		} while (invalidPoint);
-
-		pointCollection.Add(candidatePoint);
-		FVector retrievedPoint = pointCollection.Last();
-		PlacedActor = GetWorld()->SpawnActor<AActor>(Placeable);
-		PlacedActor->SetActorRelativeLocation(candidatePoint);
-		PlacedActor->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
-		PlaceablesArray.Add(PlacedActor);
-
+		FVector* EmptyPoint = GetEmptyPoint(Radius);
+		if (EmptyPoint == nullptr) {
+			UE_LOG(LogTemp, Warning, TEXT("Could not find valid place point"))
+				return;
+		}
+		PlaceActor(Placeable, *EmptyPoint);
 	}
+	
 
 
 	return;
+}
+
+bool ATile::CastSphere(FVector Location, float Radius)
+{
+	FHitResult hitResult;
+	auto result = GetWorld()->SweepSingleByChannel(hitResult, Location, Location, FQuat::Identity, ECollisionChannel::ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Radius));
+	FColor Color;
+	Color = result ? FColor::Red : FColor::Green;
+	DrawDebugSphere(GetWorld(), Location, Radius, 36, Color, true);
+	return result;
+}
+
+FVector* ATile::GetEmptyPoint(float Radius)
+{
+	FVector min = FVector(0, -2000, 0);
+	FVector max = FVector(4000, 2000, 0);
+	FBox* Box = new FBox(min, max);
+	FVector* referenceToCandidate = nullptr;
+	int AttemptCounter = 20;
+	do 
+	{
+		FVector candidatePoint = FMath::RandPointInBox(*Box);		
+		
+		if (!CastSphere(candidatePoint, Radius))
+		{
+			*referenceToCandidate = candidatePoint;
+			break;
+		}
+		AttemptCounter--;
+	} while (AttemptCounter > 0);
+
+	return referenceToCandidate;
+}
+
+void ATile::PlaceActor(TSubclassOf<AActor> Placeable, FVector PlacePoint)
+{
+	AActor* PlacedActor = GetWorld()->SpawnActor<AActor>(Placeable);
+	PlacedActor->SetActorRelativeLocation(PlacePoint);
+	PlacedActor->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
 }
 
 // Called when the game starts or when spawned

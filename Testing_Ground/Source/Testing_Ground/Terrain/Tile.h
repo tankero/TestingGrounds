@@ -7,7 +7,9 @@
 #include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Placeable.h"
+#include "DrawDebugHelpers.h"
 #include "Tile.generated.h"
+
 
 
 UCLASS()
@@ -19,8 +21,6 @@ public:
 	// Sets default values for this actor's properties
 	ATile();
 
-	UPROPERTY(EditAnywhere, Category = "Setup")
-		TSubclassOf<AActor> Placeable;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Setup")
 		TArray<AActor*> PlaceablesArray;
@@ -34,8 +34,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Setup")
-		void PlaceActors(TSubclassOf<AActor> PlaceableActor);
+		void PlaceActors(TSubclassOf<AActor> Placeable, int MinPlaced, int MaxPlaced, float Radius);
 
+private:
+
+	bool CastSphere(FVector Location, float Radius);
+	FVector *GetEmptyPoint(float Radius);
+	void PlaceActor(TSubclassOf<AActor> Placeable, FVector PlacePoint);
 	
 	
 };
