@@ -62,6 +62,7 @@ FVector* ATile::GetEmptyPoint(float Radius)
 		if (CastSphere(candidatePoint, Radius))
 		{
 			candidatePoint;
+			UE_LOG(LogTemp, Warning, TEXT("Attempt succeeded"))
 			return &candidatePoint;
 		}
 	}
