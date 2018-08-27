@@ -26,13 +26,14 @@ void ATile::PlaceActors(TSubclassOf<AActor> Placeable, int MinPlaced, int MaxPla
 	for (size_t i = 0; i < counter; i++)
 	{
 		FVector* EmptyPoint = GetEmptyPoint(Radius);
-		if (EmptyPoint == nullptr) {
+		if (EmptyPoint == nullptr)
+		{
 			UE_LOG(LogTemp, Warning, TEXT("Could not find valid place point"))
 				return;
 		}
 		PlaceActor(Placeable, *EmptyPoint);
 	}
-	
+
 
 
 	return;
@@ -53,21 +54,20 @@ FVector* ATile::GetEmptyPoint(float Radius)
 	FVector min = FVector(0, -2000, 0);
 	FVector max = FVector(4000, 2000, 0);
 	FBox* Box = new FBox(min, max);
-	FVector* referenceToCandidate = nullptr;
-	int AttemptCounter = 20;
-	do 
+	FVector* referenceToCandidate = new FVector();
+	for (size_t i = 0; i < 20; i++)
 	{
-		FVector candidatePoint = FMath::RandPointInBox(*Box);		
-		
+
+		FVector candidatePoint = FMath::RandPointInBox(*Box);
+
 		if (!CastSphere(candidatePoint, Radius))
 		{
 			*referenceToCandidate = candidatePoint;
-			break;
+			return referenceToCandidate;
 		}
-		AttemptCounter--;
-	} while (AttemptCounter > 0);
-
-	return referenceToCandidate;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("Attempt failed"))
+	return nullptr;
 }
 
 void ATile::PlaceActor(TSubclassOf<AActor> Placeable, FVector PlacePoint)
