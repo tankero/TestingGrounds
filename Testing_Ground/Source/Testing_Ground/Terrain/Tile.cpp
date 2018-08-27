@@ -54,16 +54,15 @@ FVector* ATile::GetEmptyPoint(float Radius)
 	FVector min = FVector(0, -2000, 0);
 	FVector max = FVector(4000, 2000, 0);
 	FBox* Box = new FBox(min, max);
-	FVector* referenceToCandidate = new FVector();
 	for (size_t i = 0; i < 20; i++)
 	{
 
-		FVector candidatePoint = FMath::RandPointInBox(*Box);
+		candidatePoint = FMath::RandPointInBox(*Box);
 
-		if (!CastSphere(candidatePoint, Radius))
+		if (CastSphere(candidatePoint, Radius))
 		{
-			*referenceToCandidate = candidatePoint;
-			return referenceToCandidate;
+			candidatePoint;
+			return &candidatePoint;
 		}
 	}
 	UE_LOG(LogTemp, Warning, TEXT("Attempt failed"))

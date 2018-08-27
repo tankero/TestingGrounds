@@ -41,6 +41,6 @@ private:
 	bool CastSphere(FVector Location, float Radius);
 	FVector *GetEmptyPoint(float Radius);
 	void PlaceActor(TSubclassOf<AActor> Placeable, FVector PlacePoint);
-	
+	FVector candidatePoint;
 	
 };
