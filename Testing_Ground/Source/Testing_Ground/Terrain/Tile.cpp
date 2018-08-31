@@ -59,7 +59,7 @@ FVector* ATile::GetEmptyPoint(float Radius)
 
 		candidatePoint = FMath::RandPointInBox(*Box);
 
-		if (CastSphere(candidatePoint, Radius))
+		if (!CastSphere(candidatePoint, Radius))
 		{
 			candidatePoint;
 			UE_LOG(LogTemp, Warning, TEXT("Attempt succeeded"))
