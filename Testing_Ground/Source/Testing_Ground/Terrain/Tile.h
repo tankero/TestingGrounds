@@ -33,14 +33,16 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	
+
 	UFUNCTION(BlueprintCallable, Category = "Setup")
-		void PlaceActors(TSubclassOf<AActor> Placeable, int MinPlaced, int MaxPlaced, float Radius);
+		void PlaceActors(TArray<TSubclassOf<APlaceable>> Placeables, int MinPlaced, int MaxPlaced);
 
 private:
 
 	bool CastSphere(FVector Location, float Radius);
 	FVector *GetEmptyPoint(float Radius);
-	void PlaceActor(TSubclassOf<AActor> Placeable, FVector PlacePoint);
+	void PlaceActor(TSubclassOf<APlaceable> Placeable, FVector PlacePoint, float Rotation, float Scale);
 	FVector candidatePoint;
 	
 };

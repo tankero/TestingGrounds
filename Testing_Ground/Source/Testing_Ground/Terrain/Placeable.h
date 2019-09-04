@@ -15,6 +15,18 @@ public:
 	// Sets default values for this actor's properties
 	APlaceable();
 
+	UPROPERTY(EditAnywhere, Category = "Setup" )
+		bool Scaleable = false;
+
+	UPROPERTY(EditAnywhere, Category = "Setup")
+		float Radius = 1.f;
+
+	UPROPERTY(EditAnywhere, Category = "Setup")
+		float MinimumScale = 1.f;
+
+	UPROPERTY(EditAnywhere, Category = "Setup")
+		float MaximumScale = 1.f;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

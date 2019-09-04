@@ -88,3 +88,5 @@ void AMannequin::ReleaseTrigger()
 	Weapon->StopFiring();
 }
 
+
+
